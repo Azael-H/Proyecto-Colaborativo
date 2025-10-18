@@ -2,13 +2,17 @@ package com.panamericanos.travelmarket.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.panamericanos.travelmarket.data.SampleData
+import com.panamericanos.travelmarket.ui.components.CategoryCard
+import com.panamericanos.travelmarket.ui.components.TravelItemCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -16,12 +20,20 @@ fun HomeScreen(
     onNavigateToCategory: (String) -> Unit,
     onNavigateToDetail: (String) -> Unit
 ) {
+    var searchQuery by remember { mutableStateOf("") }
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("TravelMarket") },
+                title = {
+                    Text(
+                        text = "TravelMarket",
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary
                 )
             )
         }
@@ -29,62 +41,66 @@ fun HomeScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+                .padding(paddingValues),
+            contentPadding = PaddingValues(bottom = 16.dp)
         ) {
-            item {
-                Text(
-                    text = "🏠 Explorar",
-                    style = MaterialTheme.typography.headlineMedium
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-
+            // Barra de búsqueda
             item {
                 OutlinedTextField(
-                    value = "",
-                    onValueChange = {},
-                    placeholder = { Text("🔍 Buscar lugares, eventos...") },
-                    modifier = Modifier.fillMaxWidth(),
-                    readOnly = true
+                    value = searchQuery,
+                    onValueChange = { searchQuery = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 16.dp),
+                    placeholder = { Text("Buscar lugares, eventos...") },
+                    leadingIcon = {
+                        Icon(Icons.Default.Search, contentDescription = "Buscar")
+                    },
+                    singleLine = true,
+                    shape = MaterialTheme.shapes.large
                 )
             }
 
+            // Sección de categorías
             item {
-                Text(
-                    text = "Categorías",
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(vertical = 8.dp)
-                )
-            }
+                Column(modifier = Modifier.padding(vertical = 8.dp)) {
+                    Text(
+                        text = "Categorías",
+                        style = MaterialTheme.typography.headlineSmall,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                    )
 
-            val categories = listOf(
-                "🏟️ Eventos Panamericanos" to "eventos",
-                "🗺️ Lugares Turísticos" to "lugares",
-                "🍽️ Gastronomía Local" to "gastronomia",
-                "🚕 Transporte" to "transporte",
-                "🏨 Alojamiento" to "alojamiento",
-                "🎭 Experiencias & Actividades" to "experiencias"
-            )
-
-            items(categories.size) { index ->
-                val (title, route) = categories[index]
-                ElevatedCard(
-                    onClick = { onNavigateToCategory(route) },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                    LazyRow(
+                        contentPadding = PaddingValues(horizontal = 16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        Text(text = title, style = MaterialTheme.typography.titleMedium)
-                        Icon(Icons.Default.ChevronRight, contentDescription = null)
+                        items(SampleData.categories) { category ->
+                            CategoryCard(
+                                category = category,
+                                onClick = { onNavigateToCategory(category.id) }
+                            )
+                        }
                     }
                 }
+            }
+
+            // Sección de destacados
+            item {
+                Text(
+                    text = "Destacados",
+                    style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
+                )
+            }
+
+            // Lista de items destacados
+            items(SampleData.featuredItems.size) { index ->
+                val item = SampleData.featuredItems[index]
+                TravelItemCard(
+                    item = item,
+                    onClick = { onNavigateToDetail(item.id) },
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                )
             }
         }
     }
