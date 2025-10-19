@@ -8,19 +8,22 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.panamericanos.travelmarket.data.SampleData
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.panamericanos.travelmarket.ui.components.CategoryCard
 import com.panamericanos.travelmarket.ui.components.TravelItemCard
+import com.panamericanos.travelmarket.ui.viewmodel.HomeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     onNavigateToCategory: (String) -> Unit,
-    onNavigateToDetail: (String) -> Unit
+    onNavigateToDetail: (String) -> Unit,
+    viewModel: HomeViewModel = viewModel()
 ) {
-    var searchQuery by remember { mutableStateOf("") }
+    val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
         topBar = {
@@ -38,69 +41,98 @@ fun HomeScreen(
             )
         }
     ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            contentPadding = PaddingValues(bottom = 16.dp)
-        ) {
-            // Barra de búsqueda
-            item {
-                OutlinedTextField(
-                    value = searchQuery,
-                    onValueChange = { searchQuery = it },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 16.dp),
-                    placeholder = { Text("Buscar lugares, eventos...") },
-                    leadingIcon = {
-                        Icon(Icons.Default.Search, contentDescription = "Buscar")
-                    },
-                    singleLine = true,
-                    shape = MaterialTheme.shapes.large
-                )
+        if (uiState.isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
             }
-
-            // Sección de categorías
-            item {
-                Column(modifier = Modifier.padding(vertical = 8.dp)) {
-                    Text(
-                        text = "Categorías",
-                        style = MaterialTheme.typography.headlineSmall,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                contentPadding = PaddingValues(bottom = 16.dp)
+            ) {
+                // Barra de búsqueda
+                item {
+                    OutlinedTextField(
+                        value = uiState.searchQuery,
+                        onValueChange = { viewModel.onSearchQueryChange(it) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 16.dp),
+                        placeholder = { Text("Buscar lugares, eventos...") },
+                        leadingIcon = {
+                            Icon(Icons.Default.Search, contentDescription = "Buscar")
+                        },
+                        singleLine = true,
+                        shape = MaterialTheme.shapes.large
                     )
+                }
 
-                    LazyRow(
-                        contentPadding = PaddingValues(horizontal = 16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        items(SampleData.categories) { category ->
-                            CategoryCard(
-                                category = category,
-                                onClick = { onNavigateToCategory(category.id) }
+                // Mostrar resultados de búsqueda
+                if (uiState.searchQuery.isNotBlank()) {
+                    item {
+                        Text(
+                            text = "Resultados (${uiState.searchResults.size})",
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                        )
+                    }
+
+                    items(uiState.searchResults.size) { index ->
+                        TravelItemCard(
+                            item = uiState.searchResults[index],
+                            onClick = { onNavigateToDetail(uiState.searchResults[index].id) },
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                        )
+                    }
+                } else {
+                    // Sección de categorías
+                    item {
+                        Column(modifier = Modifier.padding(vertical = 8.dp)) {
+                            Text(
+                                text = "Categorías",
+                                style = MaterialTheme.typography.headlineSmall,
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                             )
+
+                            LazyRow(
+                                contentPadding = PaddingValues(horizontal = 16.dp),
+                                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                items(uiState.categories) { category ->
+                                    CategoryCard(
+                                        category = category,
+                                        onClick = { onNavigateToCategory(category.id) }
+                                    )
+                                }
+                            }
                         }
                     }
+
+                    // Sección de destacados
+                    item {
+                        Text(
+                            text = "Destacados",
+                            style = MaterialTheme.typography.headlineSmall,
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
+                        )
+                    }
+
+                    // Lista de items destacados
+                    items(uiState.featuredItems.size) { index ->
+                        TravelItemCard(
+                            item = uiState.featuredItems[index],
+                            onClick = { onNavigateToDetail(uiState.featuredItems[index].id) },
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                        )
+                    }
                 }
-            }
-
-            // Sección de destacados
-            item {
-                Text(
-                    text = "Destacados",
-                    style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
-                )
-            }
-
-            // Lista de items destacados
-            items(SampleData.featuredItems.size) { index ->
-                val item = SampleData.featuredItems[index]
-                TravelItemCard(
-                    item = item,
-                    onClick = { onNavigateToDetail(item.id) },
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                )
             }
         }
     }

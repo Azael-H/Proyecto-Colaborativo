@@ -15,18 +15,34 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
-import com.panamericanos.travelmarket.data.SampleData
+import com.panamericanos.travelmarket.ui.viewmodel.DetailViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(
     itemId: String,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    viewModel: DetailViewModel = viewModel()
 ) {
-    val item = remember { SampleData.getItemById(itemId) }
-    var isFavorite by remember { mutableStateOf(item?.isFavorite ?: false) }
+    val uiState by viewModel.uiState.collectAsState()
 
+    LaunchedEffect(itemId) {
+        viewModel.loadItem(itemId)
+    }
+
+    if (uiState.isLoading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+        return
+    }
+
+    val item = uiState.item
     if (item == null) {
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -57,15 +73,15 @@ fun DetailScreen(
                 },
                 actions = {
                     IconButton(
-                        onClick = { isFavorite = !isFavorite },
+                        onClick = { viewModel.toggleFavorite() },
                         colors = IconButtonDefaults.iconButtonColors(
                             containerColor = Color.White.copy(alpha = 0.9f)
                         )
                     ) {
                         Icon(
-                            if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                            if (uiState.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                             contentDescription = "Favorito",
-                            tint = if (isFavorite) Color.Red else Color.Black
+                            tint = if (uiState.isFavorite) Color.Red else Color.Black
                         )
                     }
                 },
@@ -132,7 +148,6 @@ fun DetailScreen(
                     contentScale = ContentScale.Crop
                 )
 
-                // Gradiente inferior
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -155,7 +170,6 @@ fun DetailScreen(
                     .padding(paddingValues)
                     .padding(16.dp)
             ) {
-                // Categoría
                 Surface(
                     color = MaterialTheme.colorScheme.primaryContainer,
                     shape = RoundedCornerShape(8.dp)
@@ -170,7 +184,6 @@ fun DetailScreen(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // Título
                 Text(
                     text = item.title,
                     style = MaterialTheme.typography.headlineMedium,
@@ -179,7 +192,6 @@ fun DetailScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Ubicación
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -199,7 +211,6 @@ fun DetailScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Rating y reseñas
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -228,7 +239,6 @@ fun DetailScreen(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Descripción
                 Text(
                     text = "Descripción",
                     style = MaterialTheme.typography.titleLarge,
@@ -246,7 +256,6 @@ fun DetailScreen(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Información adicional
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     colors = CardDefaults.cardColors(

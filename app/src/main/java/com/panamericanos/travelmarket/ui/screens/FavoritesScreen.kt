@@ -5,20 +5,21 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.panamericanos.travelmarket.data.SampleData
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.panamericanos.travelmarket.ui.components.TravelItemCard
+import com.panamericanos.travelmarket.ui.viewmodel.FavoritesViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FavoritesScreen(onNavigateToDetail: (String) -> Unit) {
-    val favoriteItems = remember {
-        SampleData.featuredItems.filter { it.isFavorite }
-    }
+fun FavoritesScreen(
+    onNavigateToDetail: (String) -> Unit,
+    viewModel: FavoritesViewModel = viewModel()
+) {
+    val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
         topBar = {
@@ -36,7 +37,16 @@ fun FavoritesScreen(onNavigateToDetail: (String) -> Unit) {
             )
         }
     ) { paddingValues ->
-        if (favoriteItems.isEmpty()) {
+        if (uiState.isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        } else if (uiState.favoriteItems.isEmpty()) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -75,10 +85,18 @@ fun FavoritesScreen(onNavigateToDetail: (String) -> Unit) {
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(favoriteItems.size) { index ->
+                item {
+                    Text(
+                        text = "${uiState.favoriteItems.size} favoritos guardados",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+
+                items(uiState.favoriteItems.size) { index ->
                     TravelItemCard(
-                        item = favoriteItems[index],
-                        onClick = { onNavigateToDetail(favoriteItems[index].id) }
+                        item = uiState.favoriteItems[index],
+                        onClick = { onNavigateToDetail(uiState.favoriteItems[index].id) }
                     )
                 }
             }

@@ -5,31 +5,34 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.panamericanos.travelmarket.data.SampleData
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.panamericanos.travelmarket.ui.components.TravelItemCard
+import com.panamericanos.travelmarket.ui.viewmodel.CategoryViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryScreen(
     categoryName: String,
     onNavigateBack: () -> Unit,
-    onNavigateToDetail: (String) -> Unit
+    onNavigateToDetail: (String) -> Unit,
+    viewModel: CategoryViewModel = viewModel()
 ) {
-    val category = remember {
-        SampleData.categories.find { it.id == categoryName }
+    val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(categoryName) {
+        viewModel.loadCategory(categoryName)
     }
-    val items = remember { SampleData.getItemsByCategory(categoryName) }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Text(
-                        text = category?.name ?: categoryName.replaceFirstChar { it.uppercase() },
+                        text = uiState.category?.name ?: categoryName.replaceFirstChar { it.uppercase() },
                         style = MaterialTheme.typography.titleLarge
                     )
                 },
@@ -46,19 +49,28 @@ fun CategoryScreen(
             )
         }
     ) { paddingValues ->
-        if (items.isEmpty()) {
+        if (uiState.isLoading) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues),
-                contentAlignment = androidx.compose.ui.Alignment.Center
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        } else if (uiState.items.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                contentAlignment = Alignment.Center
             ) {
                 Column(
-                    horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
+                    horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = category?.icon ?: "📦",
+                        text = uiState.category?.icon ?: "📦",
                         style = MaterialTheme.typography.displayLarge
                     )
                     Text(
@@ -81,7 +93,8 @@ fun CategoryScreen(
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                if (category != null) {
+                // Descripción de la categoría
+                uiState.category?.let { category ->
                     item {
                         Card(
                             modifier = Modifier.fillMaxWidth(),
@@ -107,7 +120,7 @@ fun CategoryScreen(
                                     )
                                     Spacer(modifier = Modifier.height(4.dp))
                                     Text(
-                                        text = "${items.size} opciones disponibles",
+                                        text = "${uiState.items.size} opciones disponibles",
                                         style = MaterialTheme.typography.bodyMedium,
                                         color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
                                     )
@@ -117,10 +130,11 @@ fun CategoryScreen(
                     }
                 }
 
-                items(items.size) { index ->
+                // Lista de items
+                items(uiState.items.size) { index ->
                     TravelItemCard(
-                        item = items[index],
-                        onClick = { onNavigateToDetail(items[index].id) }
+                        item = uiState.items[index],
+                        onClick = { onNavigateToDetail(uiState.items[index].id) }
                     )
                 }
             }
