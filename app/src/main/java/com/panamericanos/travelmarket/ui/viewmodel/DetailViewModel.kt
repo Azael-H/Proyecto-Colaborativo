@@ -15,9 +15,7 @@ data class DetailUiState(
     val isFavorite: Boolean = false
 )
 
-class DetailViewModel(
-    private val repository: TravelRepository = TravelRepository()
-) : ViewModel() {
+class DetailViewModel : ViewModel() {
 
     private val _uiState = MutableStateFlow(DetailUiState())
     val uiState: StateFlow<DetailUiState> = _uiState.asStateFlow()
@@ -26,11 +24,11 @@ class DetailViewModel(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
 
-            repository.getItemById(itemId).collect { item ->
+            TravelRepository.getItemById(itemId).collect { item ->
                 _uiState.value = _uiState.value.copy(
                     item = item,
                     isLoading = false,
-                    isFavorite = repository.isFavorite(itemId)
+                    isFavorite = TravelRepository.isFavorite(itemId)
                 )
             }
         }
@@ -38,7 +36,7 @@ class DetailViewModel(
 
     fun toggleFavorite() {
         val itemId = _uiState.value.item?.id ?: return
-        val isFavorite = repository.toggleFavorite(itemId)
+        val isFavorite = TravelRepository.toggleFavorite(itemId)
         _uiState.value = _uiState.value.copy(isFavorite = isFavorite)
     }
 }

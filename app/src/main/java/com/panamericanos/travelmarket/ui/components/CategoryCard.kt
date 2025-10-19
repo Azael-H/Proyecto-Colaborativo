@@ -36,7 +36,7 @@ fun CategoryCard(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            // Icono
+            // Ícono profesional
             Box(
                 modifier = Modifier
                     .size(64.dp)
@@ -46,9 +46,11 @@ fun CategoryCard(
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = category.icon,
-                    style = MaterialTheme.typography.displaySmall
+                Icon(
+                    imageVector = category.getIcon(),
+                    contentDescription = category.name,
+                    modifier = Modifier.size(36.dp),
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
 

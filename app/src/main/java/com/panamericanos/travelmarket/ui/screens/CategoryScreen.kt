@@ -67,21 +67,27 @@ fun CategoryScreen(
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier.padding(32.dp)
                 ) {
-                    Text(
-                        text = uiState.category?.icon ?: "📦",
-                        style = MaterialTheme.typography.displayLarge
-                    )
+                    uiState.category?.let { category ->
+                        Icon(
+                            imageVector = category.getIcon(),
+                            contentDescription = category.name,
+                            modifier = Modifier.size(80.dp),
+                            tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                        )
+                    }
                     Text(
                         text = "No hay elementos en esta categoría",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         text = "Próximamente tendremos más opciones",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
                     )
                 }
             }
@@ -106,11 +112,14 @@ fun CategoryScreen(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(16.dp),
-                                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text(
-                                    text = category.icon,
-                                    style = MaterialTheme.typography.displaySmall
+                                Icon(
+                                    imageVector = category.getIcon(),
+                                    contentDescription = category.name,
+                                    modifier = Modifier.size(48.dp),
+                                    tint = MaterialTheme.colorScheme.primary
                                 )
                                 Column {
                                     Text(

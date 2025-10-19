@@ -14,9 +14,7 @@ data class FavoritesUiState(
     val isLoading: Boolean = true
 )
 
-class FavoritesViewModel(
-    private val repository: TravelRepository = TravelRepository()
-) : ViewModel() {
+class FavoritesViewModel : ViewModel() {
 
     private val _uiState = MutableStateFlow(FavoritesUiState())
     val uiState: StateFlow<FavoritesUiState> = _uiState.asStateFlow()
@@ -29,7 +27,7 @@ class FavoritesViewModel(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
 
-            repository.getFavoriteItems().collect { favorites ->
+            TravelRepository.getFavoriteItems().collect { favorites ->
                 _uiState.value = _uiState.value.copy(
                     favoriteItems = favorites,
                     isLoading = false

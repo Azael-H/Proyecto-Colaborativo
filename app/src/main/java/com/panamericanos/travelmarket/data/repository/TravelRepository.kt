@@ -7,7 +7,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class TravelRepository {
+object TravelRepository {
+
+    private val favoriteIds = mutableSetOf<String>()
 
     fun getCategories(): Flow<List<Category>> = flow {
         delay(500)
@@ -39,8 +41,6 @@ class TravelRepository {
         }
         emit(filteredItems)
     }
-
-    private val favoriteIds = mutableSetOf<String>()
 
     fun toggleFavorite(itemId: String): Boolean {
         return if (favoriteIds.contains(itemId)) {

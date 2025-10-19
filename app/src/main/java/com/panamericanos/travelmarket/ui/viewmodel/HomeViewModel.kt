@@ -18,9 +18,7 @@ data class HomeUiState(
     val searchResults: List<TravelItem> = emptyList()
 )
 
-class HomeViewModel(
-    private val repository: TravelRepository = TravelRepository()
-) : ViewModel() {
+class HomeViewModel : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
@@ -33,11 +31,11 @@ class HomeViewModel(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
 
-            repository.getCategories().collect { categories ->
+            TravelRepository.getCategories().collect { categories ->
                 _uiState.value = _uiState.value.copy(categories = categories)
             }
 
-            repository.getFeaturedItems().collect { items ->
+            TravelRepository.getFeaturedItems().collect { items ->
                 _uiState.value = _uiState.value.copy(
                     featuredItems = items,
                     isLoading = false
@@ -55,7 +53,7 @@ class HomeViewModel(
         }
 
         viewModelScope.launch {
-            repository.searchItems(query).collect { results ->
+            TravelRepository.searchItems(query).collect { results ->
                 _uiState.value = _uiState.value.copy(searchResults = results)
             }
         }

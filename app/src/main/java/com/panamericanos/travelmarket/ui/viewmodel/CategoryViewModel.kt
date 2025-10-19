@@ -16,9 +16,7 @@ data class CategoryUiState(
     val isLoading: Boolean = true
 )
 
-class CategoryViewModel(
-    private val repository: TravelRepository = TravelRepository()
-) : ViewModel() {
+class CategoryViewModel : ViewModel() {
 
     private val _uiState = MutableStateFlow(CategoryUiState())
     val uiState: StateFlow<CategoryUiState> = _uiState.asStateFlow()
@@ -27,14 +25,12 @@ class CategoryViewModel(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
 
-            // Buscar la categoría
-            repository.getCategories().collect { categories ->
+            TravelRepository.getCategories().collect { categories ->
                 val category = categories.find { it.id == categoryId }
                 _uiState.value = _uiState.value.copy(category = category)
             }
 
-            // Cargar items de la categoría
-            repository.getItemsByCategory(categoryId).collect { items ->
+            TravelRepository.getItemsByCategory(categoryId).collect { items ->
                 _uiState.value = _uiState.value.copy(
                     items = items,
                     isLoading = false
