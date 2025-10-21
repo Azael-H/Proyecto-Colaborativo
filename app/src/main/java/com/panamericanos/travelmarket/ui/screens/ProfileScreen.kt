@@ -1,5 +1,7 @@
 package com.panamericanos.travelmarket.ui.screens
 
+import android.content.Intent
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -7,15 +9,57 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.panamericanos.travelmarket.MainActivity
+import com.panamericanos.travelmarket.data.SessionManager
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen() {
+    val context = LocalContext.current
+    val sessionManager = remember { SessionManager(context) }
+    val userName by sessionManager.userName.collectAsState(initial = null)
+    val userEmail by sessionManager.userEmail.collectAsState(initial = null)
+
+    var showLogoutDialog by remember { mutableStateOf(false) }
+
+    // Diálogo de confirmación de logout
+    if (showLogoutDialog) {
+        AlertDialog(
+            onDismissRequest = { showLogoutDialog = false },
+            title = { Text("Cerrar Sesión") },
+            text = { Text("¿Estás seguro que deseas cerrar sesión?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        // Logout y reiniciar app
+                        GlobalScope.launch {
+                            sessionManager.logout()
+                            (context as? ComponentActivity)?.finish()
+                            context.startActivity(
+                                Intent(context, MainActivity::class.java)
+                            )
+                        }
+                    }
+                ) {
+                    Text("Cerrar Sesión", color = MaterialTheme.colorScheme.error)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showLogoutDialog = false }) {
+                    Text("Cancelar")
+                }
+            }
+        )
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -59,14 +103,16 @@ fun ProfileScreen() {
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            // Nombre del usuario
             Text(
-                text = "Usuario Viajero",
+                text = userName ?: "Usuario Viajero",
                 style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.onSurface
             )
 
+            // Email del usuario
             Text(
-                text = "usuario@travelmarket.com",
+                text = userEmail ?: "usuario@travelmarket.com",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -155,10 +201,20 @@ fun ProfileScreen() {
 
             Spacer(modifier = Modifier.height(24.dp))
 
+            // Botón de Cerrar Sesión
             OutlinedButton(
-                onClick = { /* TODO */ },
-                modifier = Modifier.fillMaxWidth()
+                onClick = { showLogoutDialog = true },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = MaterialTheme.colorScheme.error
+                )
             ) {
+                Icon(
+                    Icons.Default.Logout,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
                 Text("Cerrar Sesión")
             }
 

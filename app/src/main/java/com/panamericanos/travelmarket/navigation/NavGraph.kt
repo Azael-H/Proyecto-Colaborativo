@@ -12,13 +12,59 @@ import com.panamericanos.travelmarket.ui.screens.*
 @Composable
 fun NavGraph(
     navController: NavHostController,
+    startDestination: String,
     modifier: Modifier = Modifier
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Home.route,
+        startDestination = startDestination,
         modifier = modifier
     ) {
+        // Pantallas de autenticación
+        composable(Screen.Welcome.route) {
+            WelcomeScreen(
+                onLoginClick = {
+                    navController.navigate(Screen.Login.route)
+                },
+                onRegisterClick = {
+                    navController.navigate(Screen.Register.route)
+                }
+            )
+        }
+
+        composable(Screen.Login.route) {
+            LoginScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToRegister = {
+                    navController.navigate(Screen.Register.route) {
+                        popUpTo(Screen.Login.route) { inclusive = true }
+                    }
+                },
+                onLoginSuccess = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Welcome.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable(Screen.Register.route) {
+            RegisterScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToLogin = {
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(Screen.Register.route) { inclusive = true }
+                    }
+                },
+                onRegisterSuccess = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Welcome.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        // Pantallas principales (ya existentes)
         composable(Screen.Home.route) {
             HomeScreen(
                 onNavigateToCategory = { category ->
