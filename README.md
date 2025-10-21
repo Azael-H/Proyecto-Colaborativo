@@ -56,6 +56,9 @@ Puedes revisar el diseño completo de la aplicación en el siguiente enlace de F
 - Documento de especificaciones y planificación:  
   [Google Drive - Documento Proyecto TravelMarket](https://docs.google.com/document/d/1fFIS4PgwqaoPWuzvx-wHrHBQUFgPwmwdCTmBtSI2794/edit?tab=t.0)
 
+- Video explicativo:
+  [Google Drive - Video](https://drive.google.com/drive/u/1/folders/1z9hsIPNnhvBTwN7SCa7A3ShmlwomSs-Z)
+
 ---
 
 ¡Gracias por visitar nuestro proyecto!  
