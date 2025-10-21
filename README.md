@@ -1,139 +1,66 @@
-# Proyecto-Colaborativo
-Lluvia de ideas y documentacion:
-Concepto Central:
- TravelMarket es un marketplace digital que conecta a turistas de los Juegos Panamericanos con experiencias locales auténticas, facilitando su estadía y descubrimiento de la ciudad anfitriona.
+# Proyecto-Colaborativo: TravelMarket
 
-Categorías Principales:
-🏟️ Eventos Panamericanos
+---
 
-Calendario de competencias
-Venta de entradas
-Horarios y sedes
-Información de atletas/equipos
-Recordatorios de eventos favoritos
+## Descripción del Proyecto
 
-🗺️ Lugares Turísticos
+TravelMarket es un marketplace digital diseñado especialmente para los turistas que asisten a los Juegos Panamericanos. La aplicación conecta a los visitantes con experiencias locales auténticas, facilitando su estadía y la exploración de la ciudad anfitriona a través de una plataforma intuitiva y completa.
 
-Monumentos históricos
-Museos y galerías
-Parques y espacios naturales
-Miradores
-Zonas de compras
-Tours guiados
+La app ofrece información sobre eventos deportivos, lugares turísticos, gastronomía, transporte y más, con el objetivo de enriquecer la experiencia del usuario durante los Juegos.
 
-🍽️ Gastronomía Local
+---
 
-Restaurantes recomendados
-Comida típica
-Food trucks y mercados
-Experiencias culinarias (clases de cocina)
-Filtros: precio, tipo de cocina, cercanía
+## Integrantes y Roles
 
-🚕 Transporte
-
-Rutas de transporte público
-Taxis/Uber
-Alquiler de bicicletas
-Shuttles a sedes deportivas
-Mapas de metro/buses
-Estimación de tiempos y costos
-
-🏨 Alojamiento (Opcional - Fase 2)
-
-Hoteles cercanos a sedes
-Hostales
-Airbnb
-Comparador de precios
-
-🎭 Experiencias & Actividades
-
-Vida nocturna
-Conciertos y shows
-Actividades de aventura
-Clases/talleres culturales
-Tours fotográficos 
+| Nombre           |         Rol                |
+|------------------|----------------------------|
+| Gonzalo Huaman | Líder Técnico / Diseñador UI |
+| Klisman Gabriel| Tester / Documentador        |
 
 
-📱 NAVEGACIÓN APP: TravelMarket
 
-┌──────────────────┐
-│  SPLASH SCREEN   │
-│ (Logo TravelMkt) │
-└────────┬─────────┘
-          │
-          ▼
-┌──────────────────┐
-│   ONBOARDING     │
-│  (3 pantallas)   │
-│ • Descubre       │
-│ • Explora        │
-│ • Guarda         │
-└────────┬─────────┘
-          │
-          ▼
-┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-┃         🏠 HOME / EXPLORAR            ┃
-┃                                       ┃
-┃  🔍 Barra de búsqueda                 ┃
-┃                                       ┃
-┃  📦 Categorías:                       ┃
-┃     • 🏟️ Eventos Panamericanos       ┃
-┃     • 🗺️ Lugares                     ┃
-┃     • 🍽️ Gastronomía                 ┃
-┃     • 🚕 Transporte                   ┃
-┃     • 🏨 Alojamiento                  ┃
-┃     • 🎭 Experiencias                 ┃
-┃                                       ┃
-┃  ⭐ Destacados del día                ┃
-┃  📍 Cerca de ti                       ┃
-┃                                       ┃
-┃  Bottom Nav:                          ┃
-┃  [Explorar][Mapa][Favoritos][Perfil] ┃
-┗━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┛
-                │
-┌───────────────┼───────────────┐
-│               │               │
-▼               ▼               ▼
-┌─────────┐   ┌─────────────┐  ┌──────────┐
-│  MAPA   │   │  CATEGORÍA  │  │FAVORITOS │
-│         │   │   (Lista)   │  │          │
-│ Google  │   │             │  │  Tabs:   │
-│  Maps   │   │  Filtros:   │  │ •Lugares │
-│Markers  │   │  • Precio   │  │ •Eventos │
-│         │   │  • Distancia│  │ •Comida  │
-│         │   │  • Rating   │  │          │
-└────┬────┘   └──────┬──────┘  └────┬─────┘
-     │               │              │
-     └───────────────┼──────────────┘
-                     ▼
-           ┌──────────────────┐
-           │     DETALLE      │
-           │                  │
-           │  🖼️ Galería      │
-           │  📝 Descripción  │
-           │  📍 Ubicación    │
-           │  ⏰ Horarios     │
-           │  💰 Precio       │
-           │  ⭐ Rating       │
-           │                  │
-           │  [❤️ Favorito]   │
-           │  [🗺️ Cómo llegar]│
-           │  [📤 Compartir]  │
-           └──────────────────┘
+---
+
+## Enlace a Figma
+
+Puedes revisar el diseño completo de la aplicación en el siguiente enlace de Figma:
+
+[Diseño Figma TravelMarket](https://www.figma.com/design/7IitKz6OkS6rRXLImbOLeM/TravelMarket?node-id=0-1&p=f&t=zjO3seY6WF16K7sX-0)
+
+---
+
+## Funcionalidades Implementadas
+
+- Sistema de autenticación: Login y registro de usuarios.  
+- Navegación entre pantallas: Home, Mapa, Favoritos, Perfil.  
+- Seis categorías de contenido:  
+  - 🏟️ Eventos Panamericanos  
+  - 🗺️ Lugares Turísticos  
+  - 🍽️ Gastronomía Local  
+  - 🚕 Transporte  
+  - 🏨 Alojamiento (en desarrollo)  
+  - 🎭 Experiencias y Actividades  
+- 20 ítems con datos completos e imágenes en cada categoría.  
+- Sistema persistente de favoritos para guardar elementos preferidos.  
+- Funcionalidad de búsqueda avanzada con filtros.  
+- Perfil de usuario con estadísticas dinámicas.  
+- Arquitectura MVVM con Repository Pattern para mejor mantenimiento y escalabilidad.  
+- Diseño basado en Material Design 3.  
+- Gestión de estado con ViewModels y Flow.  
+- Persistencia de sesión con DataStore.  
+
+---
+
+## Documentación y Recursos
+
+- Documento de especificaciones y planificación:  
+  [Google Drive - Documento Proyecto TravelMarket](https://docs.google.com/document/d/1fFIS4PgwqaoPWuzvx-wHrHBQUFgPwmwdCTmBtSI2794/edit?tab=t.0)
+
+---
+
+¡Gracias por visitar nuestro proyecto!  
+Si quieres contribuir, revisa las ramas y abre un Pull Request.
+
+---
 
 
-┌─────────────────────┐       ┌──────────────────┐
-│   👤 PERFIL         │       │  ⭐ FAVORITOS    │
-│                     │       │                  │
-│  👤 Foto usuario    │       │  📑 Tabs:        │
-│  📝 Nombre          │       │  • Lugares       │
-│                     │       │  • Eventos       │
-│  📊 Estadísticas:   │       │  • Restaurantes  │
-│   • Lugares         │       │                  │
-│   • Favoritos       │       │  📋 Lista:       │
-│                     │       │  • Foto          │
-│  ⚙️ Configuración:  │       │  • Nombre        │
-│   • Idioma          │       │  • Categoría     │
-│   • Notificaciones  │       │  • [🗑️ Eliminar] │
-│   • Sobre app       │       │                  │
-└─────────────────────┘       └──────────────────┘
